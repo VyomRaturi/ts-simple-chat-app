@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import {
@@ -8,25 +8,36 @@ import {
     Stack,
     TextField,
     Typography,
+    useMediaQuery,
 } from "@mui/material";
-
-interface Message {
-    username: string;
-    text: string;
-}
+import { Theme } from "@mui/material/styles";
+import Message from "./Message";
+import { MessageType } from "../interface";
 
 const GroupChat: FC = () => {
     const location = useLocation();
     const username = (location.state as { username?: string })?.username;
 
+    const isSmallScreen = useMediaQuery((theme: Theme) =>
+        theme.breakpoints.down("sm")
+    );
+    const headingVariant = isSmallScreen ? "h5" : "h3";
+
     const socket: Socket = useMemo(() => io("http://localhost:3000"), []);
 
     const [message, setMessage] = useState<string>("");
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<MessageType[]>([]);
+
+    const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        socket.emit("message", { username, text: message });
+        if (!message) return;
+        socket.emit("message", {
+            username,
+            text: message,
+            timestamp: new Date(),
+        });
         setMessage("");
     };
 
@@ -35,7 +46,7 @@ const GroupChat: FC = () => {
             console.log("Connected to server");
         });
 
-        socket.on("receive-message", (data: Message) => {
+        socket.on("receive-message", (data: MessageType) => {
             console.log(data);
             setMessages((prev) => [...prev, data]);
         });
@@ -44,12 +55,16 @@ const GroupChat: FC = () => {
             console.log(s);
         });
 
+        setTimeout(() => {
+            endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+
         return () => {
             socket.off("connect");
             socket.off("receive-message");
             socket.off("welcome");
         };
-    }, [socket]);
+    }, [socket, messages]);
 
     if (!username) {
         return <Navigate to="/" />;
@@ -57,8 +72,8 @@ const GroupChat: FC = () => {
 
     return (
         <Container maxWidth="md">
-            <Typography variant="h3" component="div">
-                Welcome to socket.io {username}
+            <Typography variant={headingVariant} component="div">
+                Welcome to Chat App {username}
             </Typography>
             <Box
                 sx={{
@@ -83,13 +98,17 @@ const GroupChat: FC = () => {
                         overflow: "auto",
                     }}
                 >
-                    <Stack spacing={2}>
+                    <Stack sx={{ overflowY: "auto" }} spacing={2}>
                         {messages.map((msg, i) => (
-                            <Typography key={i} variant="h6" component="div">
-                                <strong>{msg.username}:</strong>
-                                {msg.text}
-                            </Typography>
+                            <Message
+                                message={msg}
+                                key={i}
+                                currentUser={username}
+                            />
                         ))}
+
+                        {/* Auto scroll to end when new message is received or sent */}
+                        <div ref={endOfMessagesRef} />
                     </Stack>
                 </Box>
                 <Box
@@ -116,7 +135,11 @@ const GroupChat: FC = () => {
                         type="submit"
                         variant="contained"
                         color="primary"
-                        sx={{ marginLeft: "10px" }}
+                        sx={{
+                            marginLeft: "10px",
+                            height: "100%",
+                            width: "100px",
+                        }}
                         onClick={handleSubmit}
                     >
                         Send
