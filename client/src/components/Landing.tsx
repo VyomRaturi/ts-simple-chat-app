@@ -18,6 +18,8 @@ const LandingPage: FC = () => {
 
     const handleStartChatting = (e: React.FormEvent) => {
         e.preventDefault();
+
+        // trigger alert if username is empty
         if (username.trim() === "") {
             setOpen(true);
             return;
@@ -25,6 +27,7 @@ const LandingPage: FC = () => {
         navigate("/chat", { state: { username } });
     };
 
+    // handle closing of alert
     const handleClose = (
         event: React.SyntheticEvent | Event,
         reason?: string

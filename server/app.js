@@ -28,10 +28,6 @@ io.on("connection", (socket) => {
     });
 });
 
-app.get("/", (req, res) => {
-    res.send("Hello World");
-});
-
 app.use(
     cors({
         origin: "http://localhost:5173",

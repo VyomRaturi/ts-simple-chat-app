@@ -18,6 +18,7 @@ const GroupChat: FC = () => {
     const location = useLocation();
     const username = (location.state as { username?: string })?.username;
 
+    // responsive font size
     const isSmallScreen = useMediaQuery((theme: Theme) =>
         theme.breakpoints.down("sm")
     );
@@ -28,6 +29,7 @@ const GroupChat: FC = () => {
     const [message, setMessage] = useState<string>("");
     const [messages, setMessages] = useState<MessageType[]>([]);
 
+    // reference to the end of messages div to auto scroll
     const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -55,6 +57,7 @@ const GroupChat: FC = () => {
             console.log(s);
         });
 
+        // set timeout for auto scroll , triggers only after new message is received or sent
         setTimeout(() => {
             endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
         }, 100);
@@ -71,82 +74,90 @@ const GroupChat: FC = () => {
     }
 
     return (
-        <Container maxWidth="md">
-            <Typography variant={headingVariant} component="div">
-                Welcome to Chat App {username}
-            </Typography>
-            <Box
-                sx={{
-                    height: "80vh",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    border: "1px solid gray",
-                    borderRadius: "5px",
-                    padding: "20px",
-                    marginTop: "20px",
-                    overflow: "auto",
-                }}
-            >
+        <Box
+            sx={{
+                backgroundColor: "grey.300",
+                height: "100vh",
+                padding: "30px",
+            }}
+        >
+            <Container maxWidth="md">
+                <Typography variant={headingVariant} component="div">
+                    Welcome to Chat App {username}
+                </Typography>
                 <Box
-                    component="div"
                     sx={{
+                        height: "80vh",
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "flex-end",
-                        flexGrow: 1,
+                        justifyContent: "space-between",
+                        border: "1px solid gray",
+                        borderRadius: "5px",
+                        padding: "20px",
+                        marginTop: "20px",
                         overflow: "auto",
                     }}
                 >
-                    <Stack sx={{ overflowY: "auto" }} spacing={2}>
-                        {messages.map((msg, i) => (
-                            <Message
-                                message={msg}
-                                key={i}
-                                currentUser={username}
-                            />
-                        ))}
-
-                        {/* Auto scroll to end when new message is received or sent */}
-                        <div ref={endOfMessagesRef} />
-                    </Stack>
-                </Box>
-                <Box
-                    component="form"
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginTop: "20px",
-                    }}
-                    noValidate
-                    autoComplete="off"
-                >
-                    <TextField
-                        variant="outlined"
-                        fullWidth
-                        id="message"
-                        label="Type a message"
-                        name="message"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
+                    <Box
+                        component="div"
                         sx={{
-                            marginLeft: "10px",
-                            height: "100%",
-                            width: "100px",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "flex-end",
+                            flexGrow: 1,
+                            overflow: "auto",
                         }}
-                        onClick={handleSubmit}
                     >
-                        Send
-                    </Button>
+                        <Stack sx={{ overflowY: "auto" }} spacing={2}>
+                            {messages.map((msg, i) => (
+                                <Message
+                                    message={msg}
+                                    key={i}
+                                    currentUser={username}
+                                />
+                            ))}
+
+                            {/* Auto scroll to end when new message is received or sent */}
+                            <div ref={endOfMessagesRef} />
+                        </Stack>
+                    </Box>
+                    <Box
+                        component="form"
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginTop: "20px",
+                        }}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            id="message"
+                            label="Type a message"
+                            name="message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                        />
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            sx={{
+                                marginLeft: "10px",
+                                height: "100%",
+                                width: "100px",
+                            }}
+                            onClick={handleSubmit}
+                        >
+                            Send
+                        </Button>
+                    </Box>
                 </Box>
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 };
 

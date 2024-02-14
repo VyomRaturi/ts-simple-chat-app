@@ -18,10 +18,10 @@ const Message = ({ message, currentUser }: Props) => {
         <Box
             sx={{
                 alignSelf: isCurrentUser ? "flex-end" : "flex-start",
-                bgcolor: isCurrentUser ? "primary.main" : "grey.600",
+                bgcolor: isCurrentUser ? "primary.main" : "grey.500",
                 color: "white",
                 m: 1,
-                p: 1,
+                p: 0.7,
                 borderRadius: 1,
                 width: "fit-content",
                 minWidth: "130px",
