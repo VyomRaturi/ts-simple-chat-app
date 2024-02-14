@@ -1,0 +1,16 @@
+{
+  "name": "ts-simple-chat-app",
+  "version": "1.0.0",
+  "description": "Welcome to the Simple Chat App! This is a basic chat application built with React, Express, and Socket.io.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm start --prefix client\" \"npm start --prefix server\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
