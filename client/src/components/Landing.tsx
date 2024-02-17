@@ -32,6 +32,7 @@ const LandingPage: FC = () => {
         event: React.SyntheticEvent | Event,
         reason?: string
     ) => {
+        console.log(event, reason);
         if (reason === "clickaway") {
             return;
         }
