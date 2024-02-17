@@ -24,7 +24,10 @@ const GroupChat: FC = () => {
     );
     const headingVariant = isSmallScreen ? "h5" : "h3";
 
-    const socket: Socket = useMemo(() => io("http://localhost:3000"), []);
+    const socket: Socket = useMemo(
+        () => io("https://chat-app-backend-9vu0.onrender.com/"),
+        []
+    );
 
     const [message, setMessage] = useState<string>("");
     const [messages, setMessages] = useState<MessageType[]>([]);
